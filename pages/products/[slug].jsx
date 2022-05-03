@@ -2,10 +2,13 @@ import React, { useState } from 'react'
 import { AiOutlineMinus, AiOutlinePlus, AiFillStar, AiOutlineStar } from 'react-icons/ai'
 import { Product } from '../../components'
 import { client, urlFor } from "../../lib/client"
+import { useStateContext } from '../../contexts/state.context'
 
 function ProductDetails({ product, allProducts }) {
   const [index, setIndex] = useState(0)
+
   const { images, name, description, price } = product
+  const { itemQuantity, increaseQty, decreaseQty, addItemToCart } = useStateContext()
 
   const handleMouseEnter = (i) => {
     setIndex(i)
@@ -48,7 +51,7 @@ function ProductDetails({ product, allProducts }) {
             <p className="quantity-desc">
               <span
                 className="minus"
-                onClick=""
+                onClick={() => decreaseQty(name)}
               >
                 <AiOutlineMinus />
               </span>
@@ -56,11 +59,11 @@ function ProductDetails({ product, allProducts }) {
                 className="num"
                 onClick=""
               >
-                0
+                {itemQuantity}
               </span>
               <span
                 className="plus"
-                onClick=""
+                onClick={increaseQty}
               >
                 <AiOutlinePlus />
               </span>
@@ -70,7 +73,7 @@ function ProductDetails({ product, allProducts }) {
             <button
               type="button"
               className='add-to-cart'
-              onClick=""
+              onClick={() => addItemToCart(product, itemQuantity)}
             >
               Add to cart
             </button>
