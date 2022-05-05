@@ -5,23 +5,23 @@ import { useStateContext } from "../contexts/state.context"
 import { AiOutlineShopping } from 'react-icons/ai'
 
 function Nav() {
-  const { isCartOpen, setIsCartOpen, cartQuantity } = useStateContext()
+  const { showCart, setShowCart, cartTotalQty } = useStateContext()
 
   return (
-    <div class="navbar-container">
+    <div className="navbar-container">
       <p className='logo'>
         <Link href="/">Sanity Commerce</Link>
       </p>
       <button
         type='button'
         className='cart-icon'
-        onClick={() => setIsCartOpen(!isCartOpen)}
+        onClick={() => setShowCart(!showCart)}
       >
         <AiOutlineShopping />
-        <span className='cart-item-qty'>{cartQuantity}</span>
+        <span className='cart-item-qty'>{cartTotalQty}</span>
       </button>
       {
-        isCartOpen && <Cart />
+        showCart && <Cart />
       }
     </div>
   )

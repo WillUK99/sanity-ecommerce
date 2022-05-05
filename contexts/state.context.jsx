@@ -2,85 +2,133 @@ import React, { useContext, createContext, useState, useEffect } from 'react'
 
 import { toast } from 'react-hot-toast'
 
+const emojiGen = () => {
+  const emojies = ["💋", "👌", "😵‍💫", "❤️"]
+  return emojies[Math.floor(Math.random() * emojies.length)]
+}
+
 /**
- * Increment the quantity of the product
- * Decrement the quantity of the product
- * function to add qty of items to cart when add to basket it clicked 
+ * Given a cart items array and a product object, returns a new array
+ * with product quantity = to that of the quantity passed or 1 if no quantity passed. 
+ * @param {*} cartItems 
+ * @param {*} product 
+ * @param {*} qty 
  */
+const addNewToCart = (cartItems, product, qty = 1) => {
+  const itemExists = cartItems.find((item) => item._id === product._id)
 
-const addToCart = (cartItems, productToAdd, quantity) => {
-  const isExistingItem = cartItems.find((cartItem) => cartItem._id === productToAdd._id)
-
-  if (isExistingItem) {
+  if (itemExists) {
+    toast('Added to cart', {
+      icon: emojiGen(),
+    })
     return cartItems.map((cartItem) =>
-      cartItem._id === productToAdd._id ? { ...cartItem, quantity: cartItem.quantity + quantity } : cartItem
+      cartItem._id === product._id ? { ...cartItem, qty: cartItem.qty + qty } : cartItem
     )
   }
 
-  return [...cartItems, { ...productToAdd, quantity: 1 }]
+  toast('Added to cart', {
+    icon: `${emojiGen()}`,
+  })
+  return [...cartItems, { ...product, qty: qty }]
+}
+
+/**
+ * Given a cart items array and a product object, returns a new array
+ * with product quantity decremented by 1. If product quantity is 1, product will be removed
+ * @param {*} cartItems 
+ * @param {*} product 
+ */
+const decreaseQty = (cartItems, product) => {
+  const itemExists = cartItems.find((item) => item._id === product._id)
+
+  if (itemExists.qty === 1) {
+    return cartItems.filter((item) => item._id !== product._id)
+  }
+
+  return cartItems.map((cartItem) =>
+    cartItem._id === product._id ? { ...cartItem, qty: cartItem.qty - 1 } : cartItem
+  )
 }
 
 export const StateContext = createContext({
-  isCartOpen: false,
-  setIsCartOpen: () => { },
-  cartItems: [],
+  itemQty: 0,
+  increaseItemQty: () => { },
+  decreaseItemQty: () => { },
   addItemToCart: () => { },
-  increaseQty: () => { },
+  cartTotalQty: 0,
+  showCart: false,
+  setShowCart: () => { },
+  cartTotalPrice: 0,
+  cartItems: [],
+  increaseItemInCart: () => { },
   decreaseQty: () => { },
   removeItemInCart: () => { },
-  cartTotalPrice: 0,
-  cartQuantity: 0,
-  itemQuantity: 0,
 })
 
 export const StateProvider = ({ children }) => {
-  const [isCartOpen, setIsCartOpen] = useState(false)
+  const [itemQty, setItemQty] = useState(0)
   const [cartItems, setCartItems] = useState([])
+  const [cartTotalQty, setCartTotalQty] = useState(0)
   const [cartTotalPrice, setCartTotalPrice] = useState(0)
-  const [cartQuantity, setCartQuantity] = useState(0)
-  const [itemQuantity, setItemQuantity] = useState(0)
+  const [showCart, setShowCart] = useState(false)
 
+  // For setting total cart qty
   useEffect(() => {
-    setItemQuantity((prevState) => prevState - prevState)
+    const totalQty = cartItems.reduce((a, c) => {
+      a += c.qty
+      return a
+    }, 0)
+    setCartTotalQty(totalQty)
   }, [cartItems])
 
+  // For setting total cart price
   useEffect(() => {
-    setCartTotalPrice(cartItems.reduce((a, c) => a + c.price * c.quantity, 0), toast.success(`Cart Total Price: £${cartTotalPrice}`))
+    const totalPrice = cartItems.reduce((a, c) => {
+      a += c.price
+      return a
+    }, 0)
+    setCartTotalPrice(totalPrice)
   }, [cartItems])
 
-  useEffect(() => {
-    setCartQuantity(cartItems.reduce((a, c) => a + c.quantity, 0))
-  }, [cartItems])
-
-  const addItemToCart = (productToAdd, quantity) => {
-    if (quantity === 0) {
-      toast.error('Please select quantity')
-      return
-    }
-    setCartItems(addToCart(cartItems, productToAdd, quantity))
+  const increaseItemQty = () => {
+    setItemQty((prev) => prev + 1)
   }
 
-  const increaseQty = () => {
-    setItemQuantity((prevState) => prevState + 1)
+  const decreaseItemQty = () => {
+    if (itemQty <= 0) return
+    setItemQty((prev) => prev - 1)
   }
 
-  const decreaseQty = (product) => {
-    if (itemQuantity <= 0) {
-      toast.error(`${product} quantity cannot be less than 0`)
-      return
-    }
-    setItemQuantity((prevState) => prevState - 1)
+  const addItemToCart = (product, qty) => {
+    setCartItems(addNewToCart(cartItems, product, qty))
+    setItemQty((prev) => prev - prev)
   }
 
-  // Values to be passed to the context
+  const increaseItemInCart = (product) => {
+    setCartItems(addNewToCart(cartItems, product))
+  }
+
+  const decreaseItemInCart = (product) => {
+    setCartItems(decreaseQty(cartItems, product))
+  }
+
+  const removeItemInCart = (product) => {
+    setCartItems(cartItems.filter((item) => item._id !== product._id))
+  }
+
   const value = {
-    increaseQty,
-    decreaseQty,
-    itemQuantity,
+    itemQty,
+    increaseItemQty,
+    decreaseItemQty,
     addItemToCart,
-    cartQuantity,
-    isCartOpen,
-    setIsCartOpen,
+    cartTotalQty,
+    showCart,
+    setShowCart,
+    cartTotalPrice,
+    cartItems,
+    increaseItemInCart,
+    decreaseItemInCart,
+    removeItemInCart,
   }
 
   return (
