@@ -8,7 +8,7 @@ function ProductDetails({ product, allProducts }) {
   const [index, setIndex] = useState(0)
 
   const { images, name, description, price } = product
-  const { itemQuantity, increaseQty, decreaseQty, addItemToCart } = useStateContext()
+  const { increaseItemQty, decreaseItemQty, itemQty, addItemToCart } = useStateContext()
 
   const handleMouseEnter = (i) => {
     setIndex(i)
@@ -51,19 +51,18 @@ function ProductDetails({ product, allProducts }) {
             <p className="quantity-desc">
               <span
                 className="minus"
-                onClick={() => decreaseQty(name)}
+                onClick={() => decreaseItemQty()}
               >
                 <AiOutlineMinus />
               </span>
               <span
                 className="num"
-                onClick=""
               >
-                {itemQuantity}
+                {itemQty}
               </span>
               <span
                 className="plus"
-                onClick={increaseQty}
+                onClick={() => increaseItemQty()}
               >
                 <AiOutlinePlus />
               </span>
@@ -73,14 +72,14 @@ function ProductDetails({ product, allProducts }) {
             <button
               type="button"
               className='add-to-cart'
-              onClick={() => addItemToCart(product, itemQuantity)}
+              onClick={() => addItemToCart(product, itemQty)}
             >
               Add to cart
             </button>
             <button
               type="button"
               className='buy-now'
-              onClick=""
+              // onClick=""
             >
               Buy Now
             </button>

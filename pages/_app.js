@@ -8,7 +8,10 @@ function MyApp({ Component, pageProps }) {
   return (
     <StateProvider>
       <Layout>
-        <Toaster />
+        <Toaster
+          position="bottom-left"
+          reverseOrder={true}
+        />
         <Component {...pageProps} />
       </Layout>
     </StateProvider>
