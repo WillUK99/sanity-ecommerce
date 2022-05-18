@@ -63,6 +63,9 @@ export const StateContext = createContext({
   increaseItemInCart: () => { },
   decreaseQty: () => { },
   removeItemInCart: () => { },
+  setCartItems: () => { },
+  setCartTotalQty: () => { },
+  setCartTotalPrice: () => { },
 })
 
 export const StateProvider = ({ children }) => {
@@ -129,6 +132,9 @@ export const StateProvider = ({ children }) => {
     increaseItemInCart,
     decreaseItemInCart,
     removeItemInCart,
+    setCartItems,
+    setCartTotalPrice,
+    setCartTotalQty,
   }
 
   return (
