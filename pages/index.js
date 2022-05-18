@@ -9,10 +9,9 @@ import {
 import { client } from '../lib/client'
 
 function Home({ products, bannerData }) {
-  console.log(bannerData.product)
   return (
     <>
-      <HeroBanner heroBanner={bannerData.length && bannerData[0]}/>
+      <HeroBanner heroBanner={bannerData.length && bannerData[0]} />
 
       <div className='products-heading'>
         <h2>Best selling products</h2>
@@ -22,12 +21,12 @@ function Home({ products, bannerData }) {
       <div className='products-container'>
         {
           products?.map((product) => {
-            return <Product key={product._id} product={product}/>
+            return <Product key={product._id} product={product} />
           })
         }
       </div>
 
-      <FooterBanner footerBanner={bannerData.length && bannerData[0]}/>
+      <FooterBanner footerBanner={bannerData.length && bannerData[0]} />
     </>
   )
 }

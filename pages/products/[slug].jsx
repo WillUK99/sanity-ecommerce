@@ -8,10 +8,15 @@ function ProductDetails({ product, allProducts }) {
   const [index, setIndex] = useState(0)
 
   const { images, name, description, price } = product
-  const { increaseItemQty, decreaseItemQty, itemQty, addItemToCart } = useStateContext()
+  const { increaseItemQty, decreaseItemQty, itemQty, addItemToCart, setShowCart } = useStateContext()
 
   const handleMouseEnter = (i) => {
     setIndex(i)
+  }
+
+  const handleBuyNow = () => {
+    addItemToCart(product, itemQty)
+    setShowCart(true)
   }
   
   return (
@@ -25,6 +30,7 @@ function ProductDetails({ product, allProducts }) {
             {images?.map((image, i) => (
               <img 
               src={urlFor(image)}
+              key={i}
               className={i == index ? "small-image selected-image" : "small-image"}
               onMouseEnter={() => handleMouseEnter(i)}
               />
@@ -79,7 +85,7 @@ function ProductDetails({ product, allProducts }) {
             <button
               type="button"
               className='buy-now'
-              // onClick=""
+              onClick={handleBuyNow}
             >
               Buy Now
             </button>
